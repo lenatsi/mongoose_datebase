@@ -1,10 +1,10 @@
 const Joi = require('joi')
 const schema = Joi.object({
-    name:Joi.string().pattern(new RegExp('^[a-zA-Z]{1,}$')).required(),
-    surname:Joi.string().pattern(new RegExp('^[a-zA-Z]{1,}$')).required(),
+    name:Joi.string().required(),
+    surname:Joi.string().required(),
     birthDate:Joi.date().required(),
     bio:Joi.string().required(),
-    photo: Joi.string().pattern(new RegExp('^((ht|f)tp(s?))\://([0-9a-zA-Z\-]+\.)+[a-zA-Z]{2,6}(\:[0-9]+)?(/\S*)?$')),
+    photo: Joi.string(),
     profession:Joi.string().required(),
 
 })

@@ -53,32 +53,41 @@ controller.getPersonaje = async (req, res) => {
   }
 }
 controller.getPersonajes = async (req, res) => {
-  const filter = req.query.search
+  const filter = req.query.filter
   const startDate = req.query.startDate
   const endDate = req.query.endDate
-  const query = {
-    $or: [
-      {
-        name: new RegExp(filter, 'i'),
-      },
-      {
-        surname: new RegExp(filter, 'i'),
-      },
-      {
-        birthDate: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    ],
-  }
-  try {
-    const personajes = await Personaje.find(query)
-    res.send(personajes)
-  } catch (err) {
-    res.status(500).send(err)
-  }
-  /*let query ={}
+  console.log(filter)
+  console.log(startDate)
+  const filters = []
+    if (filter) {
+        filters.push({ fullname: new RegExp(filter, 'i') })
+    }
+    if (startDate && endDate) {
+        filters.push({
+            "birthDate": {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        })
+    }
+    try {
+        let profiles = {}
+        if (filters.length > 0) {
+            profiles = await Personaje.aggregate([
+                { $addFields: { fullname: { $concat: ["$name", " ", "$surname"] } } },
+                {
+                    $match: { $and: filters }
+                }
+            ])
+        } else {
+            profiles = await Personaje.find()
+        }
+        res.send(profiles)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("ocurrió un error")
+    }
+  /* let query ={}
   
   if (filter || (startDate && endDate)) {
     query.$or =[]
@@ -103,7 +112,7 @@ controller.getPersonajes = async (req, res) => {
   }catch (error){
     console.log(error)
     res.status(500).send('Error al enviar datos')
-  }*/
+  } */ 
 }
 controller.updatePersonaje = async (req, res) => {
   const name = req.body.name

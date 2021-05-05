@@ -5,6 +5,18 @@ const app = express()
 const createError = require('http-errors');
 const path = require('path');
 const connection = require('./src/connection')
+const passport = require('passport')
+const cors = require('cors')
+
+var corsOption = {
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    exposedHeaders: ['x-auth-token', 'content-type', 'X-Requested-With', 'Authorization', 'Accept', 'Origin'],
+ }
+ 
+app.use(cors(corsOption))
+app.use(passport.initialize())
 
 app.use(express.urlencoded({
     extended: true
